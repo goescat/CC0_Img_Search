@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+
+<head>
+  <meta charset="utf-8">
+  <title>CC0 圖片搜尋工具</title>
+  <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+  <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+  <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+  <style>
+    img {
+      height: 200px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="readme" data-role="page" data-theme="b" data-content-theme="b">
+    <div data-role="header">
+      <h1>引導頁</h1>
+    </div>
+    <div data-role="content" style="text-align:center">
+      <div>
+        CC0 圖片搜尋工具 這個 App 可以用來搜尋 CC0 圖庫：pixabay 上的圖片，不須登入。<br> 輸入想尋找的圖片主題，將回傳20張該主題之最新圖片。 未輸入則為不分類別的20張圖片。
+      </div>
+    </div>
+
+
+    <div data-role="footer" data-position="fixed">
+      <div data-role="navbar">
+        <ul>
+          <li><a href="#home" data-role="tab" data-icon="grid">開始使用</a></li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <div id="home" data-role="page" data-theme="b" data-content-theme="b">
+    <div data-role="header">
+      <h1>CC0 圖片搜尋工具</h1>
+    </div>
+    <div data-role="content" style="text-align:center">
+      <div data-role="main" class="ui-content">
+        <div>
+          想找些什麼：
+          <input type="text" id="searchphoto" data-theme="a" />
+        </div>
+        <br>
+        <div>
+        圖片類型：
+        <select id="imgType">
+          <option value="all">全部圖片</option>
+          <option value="photo">相片</option>
+          <option value="illustration">插畫</option>
+          <option value="vector">向量</option>
+        </select>
+        </div>
+        <br>
+        <button id="searchbtn">搜尋</button>
+        <div id="images"></div>
+        <script>
+          $(document).ready(function() {
+            //var usrInp = $('#searchphoto').val();
+
+            $('#searchbtn').click(function() {
+              //https://pixabay.com/api/?key=4170658-00d3ab8da52bdd3a62afc8dab&q=yellow+flowers&image_type=photo
+              var pixabayAPI = "https://pixabay.com/api/?";
+
+              $.getJSON(pixabayAPI, {
+                  key: '4170658-00d3ab8da52bdd3a62afc8dab',
+                  q: $('#searchphoto').val(),
+                  image_type: $('#imgType').val(), // "all", "photo", "illustration", "vector"
+                })
+                .done(function(data) {
+                  $("#images").html("")
+                  $.each(data.hits, function(i, hit) {
+                    var imgInfo = "<div><p>作者：" + hit.user + "</p><br><img src=\"";
+                    imgInfo += hit.previewURL + "\"/>";
+                    imgInfo += "<button class=\"ui-btn ui-btn-inline\"><a download href=\"" + hit.largeImageURL + "\">儲存到手機</button></div>";
+
+                    //$("<img>").attr("src", item.media.m).appendTo("#images");
+                    $('#images').append(imgInfo);
+                    if (i === 20) {
+                      return false;
+                    }
+                  });
+                });
+            });
+          });
+        </script>
+      </div>
+    </div>
+    <div data-role="footer" data-position="fixed">
+      <div data-role="navbar">
+        <ul>
+          <li><a href="#readme" data-role="tab" data-icon="grid">引導頁</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  </div>
+</body>
+
+</html>
